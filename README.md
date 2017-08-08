@@ -24,7 +24,7 @@ Run in shell
 Run release
 ------------
 
-    $ rebar3 release -d false
+    $ rebar3 release
     $ sh run.sh
     
     
