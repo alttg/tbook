@@ -1,0 +1,21 @@
+{application, tbook,
+ [{description, "Tickets Boooking Application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { tbook_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    emysql,
+    crypto,
+    ranch,
+    cowboy,
+    jsx
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.
