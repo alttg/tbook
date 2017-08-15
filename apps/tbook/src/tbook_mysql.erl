@@ -102,6 +102,7 @@ add_title(ImdbId, Title) when is_number(ImdbId) ->
     end.
 
 
+-ifdef(EUNIT).
 
 -spec remove_movie(ImdbId, ScreenId) -> 'ok' when
     ImdbId :: integer(),
@@ -112,3 +113,5 @@ remove_movie(ImdbId, ScreenId) when is_number(ImdbId) andalso is_number(ScreenId
     emysql:prepare(delete_tbook, Q),
     #ok_packet{} = emysql:execute(?MODULE, delete_tbook, [ImdbId, ScreenId]),
     ok.
+
+-endif.

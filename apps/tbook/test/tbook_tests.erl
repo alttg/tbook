@@ -16,7 +16,7 @@ tbook_test_() ->
         fun() ->
             _ = process_flag(trap_exit, true),
             application:set_env(tbook, tmdb, {"bc07843007f6ffa6e581cc50110a8749", "en-US"}),
-            application:set_env(tbook, mysql, {"localhost", "tbook", "tbook", "tbook"}),
+            application:set_env(tbook, mysql, {"localhost", "tbook", "tbook", "tbook_test"}),
             application:set_env(tbook, http, 8080),
             [start_application(X) || X <- [crypto,asn1,public_key,ssl,emysql,jsx,tbook]]
         end,
@@ -45,7 +45,7 @@ tbook_test_() ->
 cowboy_request() ->
     PostBody = jsx:encode(#{<<"imdbId">> => ?bmovie, <<"screenId">> =>?bscreenid, <<"test">> => 1}),
     Url = "http://localhost:8080/",
-    {ok, {_,_,Ret}}  = httpc:request(post, {Url, [], "application/x-www-form-urlencoded", PostBody}, [], []),
+    {ok, {_,_,Ret}}  = httpc:request(post, {Url, [], "application/json", PostBody}, [], []),
     ?assertEqual(#{<<"result">> => 1}, jsx:decode(tbook:to_binary(Ret), [return_maps])).
 
 tmdb_request() ->
@@ -66,15 +66,15 @@ mysql_info() ->
     ?assertEqual({ok,[?movie, ?screenid,2,1]},tbook_mysql:info(?movie, ?screenid)).
 
 request_reserveseat() ->
-    ?assertEqual(#{ <<"result">> => 1 },tbook_handler:handle_request(#{<<"imdbId">> => ?bmovie, <<"screenId">> => ?bscreenid})).
+    ?assertEqual(#{ <<"result">> => 1 },tbook_handler:handle_post(#{<<"imdbId">> => ?bmovie, <<"screenId">> => ?bscreenid})).
 
 request_reserveseat_error() ->
-    ?assertEqual(#{ <<"result">> => 0 },tbook_handler:handle_request(#{<<"imdbId">> => ?bmovie, <<"screenId">> => ?bscreenid})).
+    ?assertEqual(#{ <<"result">> => 0 },tbook_handler:handle_post(#{<<"imdbId">> => ?bmovie, <<"screenId">> => ?bscreenid})).
 
 request_info() ->
-    Res = #{<<"ScreenId">> => ?bscreenid,<<"imdbId">> => ?bmovie,
-        <<"reserved">> => 2,<<"result">> => 1,
-        <<"title">> => <<"Annabelle: Creation">>,<<"total">> => 2},
+    Res = #{<<"screenId">> => ?bscreenid,<<"imdbId">> => ?bmovie,
+        <<"reservedSeats">> => 2,<<"result">> => 1,
+        <<"movieTitle">> => <<"Annabelle: Creation">>,<<"availableSeats">> => 2},
     ?assertEqual(Res,tbook_handler:with_title(tbook_mysql:info(?movie, ?screenid))).
 
 mysql_remove() ->
